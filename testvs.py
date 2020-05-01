@@ -1,9 +1,13 @@
 import sys
 
-ex=sys.version 
+ex = sys.version
+
 
 def greet(who):
-    greeting='Eyo {}, my python version is {}, and Carole Baskin killed her Husband'.format(who, ex)
+    greeting = 'Eyo {}, my python version is {}, and Carole Baskin killed her Husband'.format(
+        who, ex)
     print(greeting)
 
+
+name = input('Who the are you? ')
 greet('Mads')
