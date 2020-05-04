@@ -9,5 +9,5 @@ def greet(who):
     print(greeting)
 
 
-name = input('Who the are you? ')
+name = input('Who the f*** are you? ')
 greet('Mads')
