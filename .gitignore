@@ -5,4 +5,10 @@ Output
 'Big Files'
 Big Files
 subaru_IA484.ldac
+subaru_IA484_clean.ldac
+resi_subaru_IA484_clean.fits
+chi_subaru_IA484_clean.fits
+proto_subaru_IA484_clean.fits
+samp_subaru_IA484_clean.fits
+snap_subaru_IA484_clean.fits
 psfex.xml
