@@ -11,8 +11,7 @@ import sys
 # 2. THEN RUN THIS CODE
 # 3. Generate sub-catalogs with sources within each FWHM_IMAGE bin
 # 4. Run PSFEx over each sub-catalog with EXACT SAME FILENAME AS INPUT HERE
-​
-​
+
 # User Input
 FILENAME = sys.argv[1]  # 'subaru_IB464_clean.ldac'   # must already be CLEAN!
 FILE_ID_PREFIX = FILENAME.split('_clean')[0]  # 'subaru_IA464'
@@ -29,8 +28,7 @@ PSF_NSNAP = 10              # number of PSF snapshots to make
 PLOT = 1
 MAKE_SUBCATALOGS = True
 plt.ioff()
-​
-​
+
 # Open the file
 fname = os.path.join(WORKING_DIR, FILENAME)
 print(f'Trying to open {fname}')
@@ -38,11 +36,11 @@ hdul = fits.open(fname, ignore_missing_end=True)
 print(hdul.info())
 catalog = Table(hdul['LDAC_OBJECTS'].data)
 fwhm_image = catalog['FWHM_IMAGE']
-​
+
 if not os.path.exists(OUTPUT_DIR):
     print(f'Creating output directory: {OUTPUT_DIR}')
     os.system(f'mkdir {OUTPUT_DIR}')
-​
+
 # Create grid
 xedges, yedges = np.arange(0, MOSAIC_SIZE[0], DBINS[0]), np.arange(
     0, MOSAIC_SIZE[1], DBINS[1])
@@ -53,12 +51,12 @@ H, xedges, yedges, loc = stats.binned_statistic_2d(catalog['X_IMAGE'], catalog['
 bin_id, counts = np.unique(loc, return_counts=True)
 print(
     f'Pre-digitize: Average of {np.mean(counts):3.3f} sources in a spatial bin.')
-​
+
 # Compute grid points
 xcenters, ycenters = xedges[:-1] + DBINS[0]/2., yedges[:-1] + DBINS[1]/2.
 mx, my = np.meshgrid(xcenters, ycenters)
 mmx, mmy = mx[~np.isnan(H.T)], my[~np.isnan(H.T)]
-​
+
 # Make FWHM grid
 
 
@@ -69,14 +67,13 @@ def histedges_equalN(x, nbin):
                      np.sort(x))
 
 
-​
 narrow_fwhm_image = fwhm_image[(
     fwhm_image - med_fwhm > FWHM_RANGE[0]) & (fwhm_image - med_fwhm < FWHM_RANGE[1])]
 bin_edges = histedges_equalN(narrow_fwhm_image, PSF_NSNAP)
 fwhm_grid = bin_edges[:-1] + np.ediff1d(bin_edges)/2.
 plt.close('all')
-​
-​
+
+
 # Assign gridpoints to nearest FWHM gridpoint
 digit_H = -99 * np.ones_like(H)
 k = -1
@@ -93,42 +90,41 @@ for i in np.arange(H.shape[0]):
         print(
             f'{k} :: {grid_val:2.2f}  ({H[i,j] + med_fwhm:2.2f}, {mindiff:2.2f})')
         digit_loc.append(k)
-​
+
 # assert(len(np.unique(digit_H)) - 1 == PSF_NSNAP)
 digit_H[digit_H < 0] = np.nan
-​
+
 digit_bin_id, digit_counts = np.unique(digit_H, return_counts=True)
 print(
     f'Post-digitize: Average of {len(narrow_fwhm_image)/PSF_NSNAP:2.2f} sources in each of {len(fwhm_grid)} FWHM bins')
 eacc = np.std(H.T[~np.isnan(H.T)] - digit_H.T[~np.isnan(H.T)])
 print(f'Expected FWHM accuracy: {eacc:3.3f} px')
-​
+
 # Create a new WCS object.  The number of axes must be set
 # from the start
 w = wcs.WCS(naxis=2)
-​
+
 # Set up an "Airy's zenithal" projection
 # Vector properties may be set with Python lists, or Numpy arrays
 w.wcs.crpix = [2.271550000000E+04, 2.184100000000E+04]
 w.wcs.cdelt = np.array([-4.166666800000E-05, 4.166666800000E-05])
 w.wcs.crval = [1.501163213000E+02, 2.200973097000E+00]
 w.wcs.ctype = ["RA---AIR", "DEC--AIR"]
-​
+
 ra, dec = w.wcs_pix2world(mmx, mmy, 1)
-​
-​
+
 # Write output
-​
+
 # RA, DEC, X, Y, ID_GRIDPT, MEDIAN_FWHM, GRID_FWHM, FILE_ID
 FileID = []
 for i in digit_H.T[~np.isnan(H.T)]:
     FileID.append(f'{FILE_ID_PREFIX}_{np.argwhere(fwhm_grid==i)[0][0] + 1}')
-​
+
 tab = Table([ra, dec, mmx, mmy, digit_loc, H.T[~np.isnan(H.T)], digit_H.T[~np.isnan(H.T)], FileID], names=[
             'RA', 'Dec', 'X_IMAGE', 'Y_IMAGE', 'ID_GRIDPT', 'MEDIAN_FWHM', 'GRID_FWHM', 'FILE_ID'])
 print(f'Writing out grid table to {TABLE_OUTPUT_NAME}')
 tab.write(TABLE_OUTPUT_PATH, overwrite=OVERWRITE, format='ascii.tab')
-​
+
 data = hdul['LDAC_OBJECTS'].data.copy()
 for i, fwhm in enumerate(fwhm_grid):
     binlo, binhi = bin_edges[i:i+2]
@@ -139,8 +135,7 @@ for i, fwhm in enumerate(fwhm_grid):
         f'Writing out sub-catalog for #{i+1} ({fwhm:3.3f}px) to {outfilename}')
     outpath = os.path.join(OUTPUT_DIR, outfilename)
     hdul.writeto(outpath, overwrite=OVERWRITE)
-​
-​
+
 if PLOT > 0:
     fig, ax = plt.subplots(ncols=3, figsize=(25, 7))
     h = ax[0].imshow(H.T - med_fwhm, cmap='coolwarm', vmin=DYN_RANGE[0],
@@ -150,8 +145,7 @@ if PLOT > 0:
                  vmax=DYN_RANGE[1], extent=(0, xedges[-1], 0, yedges[-1]))
     plt.colorbar(h, orientation="horizontal")
     ax[1].text(0.01, 1.01, s=f'{FILENAME}', transform=ax[0].transAxes)
-​
-​
+
 ax[2].hist(fwhm_image, bins=np.arange(med_fwhm+DYN_RANGE[0], med_fwhm +
                                       DYN_RANGE[1]+0.01, 0.01), histtype='step', label='Input sources')
 [ax[2].axvline(i, ls='dashed', c='grey', alpha=0.8) for i in bin_edges]
@@ -167,5 +161,5 @@ ax[2].set_xlim(med_fwhm+DYN_RANGE[0], med_fwhm+DYN_RANGE[1])
 ax[2].axvline(med_fwhm, ls='dotted', c='grey')
 ax[2].set_xlabel('FWHM_IMAGE')
 ax[2].legend()
-​
+
 fig.savefig(os.path.join(OUTPUT_DIR, f'{FILE_ID_PREFIX}_PLOT.pdf'))
