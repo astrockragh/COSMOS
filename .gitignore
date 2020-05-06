@@ -14,6 +14,13 @@ snap_subaru_IA484_clean.fits
 psfex.xml
 subaru_IA484_OUT
 subaru_IB464_OUT
+subaru_IB464_OUT(John)
+subaru_IB464_OUT_John
 subaru_IB464.ldac
 subaru_IB464_clean.ldac
+resi_subaru_IB464_clean.fits
+chi_subaru_IB464_clean.fits
+proto_subaru_IB464_clean.fits
+samp_subaru_IB464_clean.fits
+snap_subaru_IB464_clean.fits
 selection_IA484.png

@@ -26,7 +26,7 @@ ax.set(title='Selected {}/{} objects'.format(sum(mask_ldac), n_obj),
        xlim=(5,  7), ylim=(15, 25), xlabel='FWHM', ylabel='MAG_APER')
 plt.gca().invert_yaxis()
 plt.legend()
-fig.savefig('selection_IA484.png')
+fig.savefig('selection_'+filename[:12]+'.png')
 fig.show()
 
 table['LDAC_OBJECTS'].data = tab_ldac[mask_ldac]
