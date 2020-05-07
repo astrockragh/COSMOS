@@ -28,7 +28,7 @@ ax.set(title='Selected {}/{} objects in {},{}-box'.format(sum(mask_ldac), n_obj,
        xlim=(0,  15*2), ylim=(0, 30), xlabel=x, ylabel=y)
 plt.gca().invert_yaxis()
 plt.legend()
-# fig.savefig('selection_'+filename[:12]+'.png')
+fig.savefig('selection_'+filename[:12]+'.png')
 fig.show()
 
 table['LDAC_OBJECTS'].data = tab_ldac[mask_ldac]
