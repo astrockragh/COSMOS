@@ -1,9 +1,9 @@
-# Default configuration file for PSFEx 3.17.1
+# Constant-PSF configuration file for PSFEx 3.17.1
 
 #-------------------------------- PSF model ----------------------------------
 
 BASIS_TYPE      PIXEL_AUTO  # NONE, PIXEL, GAUSS-LAGUERRE or FILE
-BASIS_NUMBER    20              # Basis number or parameter
+BASIS_NUMBER    1              # Basis number or parameter
 BASIS_SCALE     0.75            # Gauss-Laguerre beta parameter
 NEWBASIS_TYPE   NONE            # Create new basis: NONE, PCA_INDEPENDENT
                                 # or PCA_COMMON
@@ -25,7 +25,7 @@ PHOTFLUXERR_KEY FLUXERR_APER(1) # Catalogue parameter for photometric error
 
 PSFVAR_KEYS     X_IMAGE,Y_IMAGE # Catalogue or FITS (preceded by :) params
 PSFVAR_GROUPS   1,1             # Group tag for each context key
-PSFVAR_DEGREES  5               # Polynom degree for each group
+PSFVAR_DEGREES  0               # Polynom degree for each group
 PSFVAR_NSNAP    1               # Number of PSF snapshots per axis
 HIDDENMEF_TYPE  INDEPENDENT     # INDEPENDENT or COMMON
 STABILITY_TYPE  EXPOSURE        # EXPOSURE or SEQUENCE
